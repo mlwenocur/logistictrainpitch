@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Trainer and Simulator for Logistical Regression with GLM</title>
+  <meta charset="utf-8">
+  <meta name="description" content="Trainer and Simulator for Logistical Regression with GLM">
+  <meta name="author" content="M. L. Wenocur">
+  <meta name="generator" content="slidify" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/default.css" media="all" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/phone.css" 
+    media="only screen and (max-device-width: 480px)" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/slidify.css" >
+  <link rel="stylesheet" href="libraries/highlighters/highlight.js/css/solarized_light.css" />
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->  
+  
+  <!-- Grab CDN jQuery, fall back to local if offline -->
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+  <script>window.jQuery || document.write('<script src="libraries/widgets/quiz/js/jquery.js"><\/script>')</script> 
+  <script data-main="libraries/frameworks/io2012/js/slides" 
+    src="libraries/frameworks/io2012/js/require-1.0.8.min.js">
+  </script>
+  
+  
+
+</head>
+<body style="opacity: 0">
+  <slides class="layout-widescreen">
+    
+    <!-- LOGO SLIDE -->
+        <slide class="title-slide segue nobackground">
+  <hgroup class="auto-fadein">
+    <h1>Trainer and Simulator for Logistical Regression with GLM</h1>
+    <h2>Prototype Implementation</h2>
+    <p>M. L. Wenocur<br/></p>
+  </hgroup>
+  <article></article>  
+</slide>
+    
+
+    <!-- SLIDES -->
+    <slide class="" id="slide-1" style="background:mistyrose;">
+  <hgroup>
+    <h1>Description of Problem</h1>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li>Understanding Linear Regression is hard. </li>
+<li>But understanding Logistic Regression is harder!</li>
+<li>It is hard developing a sense of how model elements affect probabilities.</li>
+<li>Harder yet understanding affect of model geometry on parameter estimation.</li>
+<li>Project evolved from an attempt to understand behavior of Logistic Regression, and the inputs/outputs from R&#39;s glm method.</li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-2" style="background:mistyrose;">
+  <hgroup>
+    <h1>Benefits of Trainer</h1>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li>User can modify model parameters and structure.</li>
+<li>Study relationship between sample size and reliability of estimates.</li>
+<li>Learn about the relationship of model structure to probabilities.</li>
+<li>Understand R&#39;s GLM logistic model inputs and outputs.</li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-3" style="background:mistyrose;">
+  <hgroup>
+    <h1>Loan Defaulting Probability</h1>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li><p>Here is an example of how far estimates can differ from true values and yet match probabilities very well, as seen from the graph given below.</p></li>
+<li><p>Denote the probability of defaulting by \(p(x)\)</p>
+
+<ul>
+<li>where \(p(x) = (1 + \exp(2 - 0.5x - 0.1x^2))^{-1}\),</li>
+<li>\(x\) is the predictor, equaling the ratio of net debt to net income, with  \(0.3 \leq x \leq 5\).</li>
+</ul></li>
+<li><p>We create a sample of loan histories by first drawing \(x\) uniformly over [0.3, 5] and then generating default events with probability of \(p(x)\).</p></li>
+</ul>
+
+<pre><code class="r">prob &lt;- function(x) (1 + exp(2  - 0.5 * x - 0.1 * x^2)) ^ -1
+set.seed(123); X &lt;- runif(1000, 0.3, 5); X2 &lt;- X^2
+yVals &lt;- sapply(X, function(x){rbinom(1, 1, prob(x))})
+mod1 &lt;- glm(yVals ~ X + X2, family = binomial)
+cfs &lt;- coefficients(mod1)
+fmt &lt;- &#39;Fitted Coefficients: %4.3f %4.3f %4.3f vs actual: -2.000 0.500 0.100&#39;
+cat(sprintf(fmt, cfs[1], cfs[2], cfs[3]))
+</code></pre>
+
+<pre><code>## Fitted Coefficients: -2.306 0.955 0.010 vs actual: -2.000 0.500 0.100
+</code></pre>
+
+<pre><code class="r">fitRho &lt;- cfs[1] + cfs[2] * X + cfs[3] * X^2; fitProb &lt;- (1 + exp(-fitRho))^-1
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-4" style="background:mistyrose;">
+  <article data-timings="">
+    <pre><code class="r">probCmp &lt;- melt(data.frame(X, fitProb, exactProb = prob(X)), id = &quot;X&quot;)
+ggplot(data=probCmp, aes(x=X, y=value, color=variable)) + geom_line(size=1.5) + 
+    coord_fixed(ratio = 5) + labs(x=&#39;Debt to Income Ratio&#39;, y=&#39;Probability of Default&#39;)
+</code></pre>
+
+<p><img src="assets/fig/settingUpGraphData-1.png" alt="plot of chunk settingUpGraphData"> </p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+    <slide class="backdrop"></slide>
+  </slides>
+  <div class="pagination pagination-small" id='io2012-ptoc' style="display:none;">
+    <ul>
+      <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=1 title='Description of Problem'>
+         1
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=2 title='Benefits of Trainer'>
+         2
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=3 title='Loan Defaulting Probability'>
+         3
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=4 title='NA'>
+         4
+      </a>
+    </li>
+  </ul>
+  </div>  <!--[if IE]>
+    <script 
+      src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js">  
+    </script>
+    <script>CFInstall.check({mode: 'overlay'});</script>
+  <![endif]-->
+</body>
+  <!-- Load Javascripts for Widgets -->
+  
+  <!-- MathJax: Fall back to local if CDN offline but local image fonts are not supported (saves >100MB) -->
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        processEscapes: true
+      }
+    });
+  </script>
+  <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/2.0-latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  <!-- <script src="https://c328740.ssl.cf1.rackcdn.com/mathjax/2.0-latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script> -->
+  <script>window.MathJax || document.write('<script type="text/x-mathjax-config">MathJax.Hub.Config({"HTML-CSS":{imageFont:null}});<\/script><script src="libraries/widgets/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"><\/script>')
+</script>
+<!-- LOAD HIGHLIGHTER JS FILES -->
+  <script src="libraries/highlighters/highlight.js/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <!-- DONE LOADING HIGHLIGHTER JS FILES -->
+   
+  </html>

@@ -25,7 +25,7 @@ knit        : slidify::knit2slides
 + User can modify model parameters and structure.
 + Study relationship between sample size and reliability of estimates.
 + Learn about the relationship of model structure to probabilities.
-+ Understand R's GLM logistic model inputs and outputs.
++ Discover sensitivity of regression estimates to sample variability.
 
 ---  bg:mistyrose
 

@@ -15,7 +15,7 @@ knit        : slidify::knit2slides
 + Understanding Linear Regression is hard. 
 + But understanding Logistic Regression is harder!
 + It is hard developing a sense of how model elements affect probabilities.
-+ Harder yet understanding affect of model geometry on parameter estimation.
++ Harder yet understanding effect of model geometry on parameter estimation.
 + Project evolved from an attempt to understand behavior of Logistic Regression, and the inputs/outputs from R's glm method.
 
 --- bg:mistyrose

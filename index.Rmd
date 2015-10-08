@@ -30,7 +30,7 @@ knit        : slidify::knit2slides
 ---  bg:mistyrose
 
 # Loan Defaulting Probability
-+ Here is an example of how far estimates can differ from true values and yet match probabilities very well, as seen from the graph given below.
++ Here is an example of how far estimates can differ from true values and yet match probabilities surprisingly well, as seen from the graph given below.
 
 + Denote the probability of defaulting by $p(x)$
  + where $p(x) = (1 + \exp(2 - 0.5x - 0.1x^2))^{-1}$,
